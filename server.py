@@ -52,7 +52,14 @@ def ask_gemini(user_id, question):
         )
         write_msg(user_id, response.text.strip())
     except Exception as e:
-        return f"Произошла ошибка при обработке запроса: {str(e)}"
+        write_msg(user_id, f"Произошла ошибка при обработке запроса: {str(e)}")
+
+def ping_s(user_id, argument):
+    server = JavaServer.lookup("94.26.229.202", 25565)
+    latency = server.ping()
+    latency = str(latency)[:3]
+    write_msg(user_id, f"Время ответа сервера (пинг) {latency} мс")
+
 
 class messages:
     def __init__(self):
@@ -93,6 +100,7 @@ class NonServerCommand(Command):
 commands_set = {
     NonServerCommand("/онлайн", players, False),
     NonServerCommand("/вопрос", ask_gemini, False),
+    NonServerCommand("/сервер", ping_s, False),
 }
 
 def run():

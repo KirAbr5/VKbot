@@ -10,10 +10,16 @@ with open("ai_text.txt", "r", encoding="utf-8") as file:
 # Настройка API-ключа
 genai.configure(api_key="AIzaSyBgI_yz6s4sXS6ImytSJ0Q7OPoKnE_afto")
 
-def players(msg):
+def online(msg):
     server = JavaServer.lookup("94.26.229.202", 25565)
     status = server.status()
     return f"Игроков онлайн: {status.players.online}"
+
+def ping_s(msg):
+    server = JavaServer.lookup("94.26.229.202", 25565)
+    latency = server.ping()
+    return f"Время ответа сервера (пинг) {latency} мс"
+
 
 # Функция для генерации ответа
 def ask_gemini(question):
@@ -58,7 +64,10 @@ for event in longpoll.listen():
             msg = event.text.lower()
             id = event.user_id
             if msg == "/онлайн":
-                response = players(msg)
+                response = online(msg)
+                vk.messages.send(user_id=event.user_id, message=response, random_id=0)
+            elif msg == "/сервер":
+                response = ping_s(msg)
                 vk.messages.send(user_id=event.user_id, message=response, random_id=0)
             elif msg.startswith("/вопрос"):
                 response = ask_gemini(msg)
